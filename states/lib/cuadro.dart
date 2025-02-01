@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'contador.dart';
 
 class Cuadro extends StatelessWidget {
   const Cuadro({super.key});
@@ -14,7 +14,7 @@ class Cuadro extends StatelessWidget {
     width: 100.0,
     height: 100.0,
     child: Center(
-            child: Text("Hello World!", style: TextStyle(color: Colors.white),),
+            child: Contador(),
         ),
   );
   }

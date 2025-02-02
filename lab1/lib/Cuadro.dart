@@ -9,7 +9,9 @@ class Cuadro extends StatelessWidget {
           color: Colors.amber,
           borderRadius: BorderRadius.circular(5.0)
         ),
-        child: Text("Hello World!", style: TextStyle(color: Colors.white),),
+        child: Center(
+          child: Text("Hello World!", style: TextStyle(color: Colors.white),),
+        ),
     width: 100.0,
     height: 100.0,
   );

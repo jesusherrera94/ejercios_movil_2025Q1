@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:io';
 
 class Contador extends StatefulWidget {
 
@@ -9,7 +10,7 @@ class Contador extends StatefulWidget {
 }
 
 
-class _ContadorState extends State<Contador> {
+class _ContadorState extends State<Contador> with WidgetsBindingObserver {
   // state
   int _counterState = 0;
 
@@ -19,6 +20,8 @@ class _ContadorState extends State<Contador> {
   @override
   void initState () {
     _contador();
+    // agrego esto para que se puedan leer cuando el usuario se sale del app
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
@@ -43,8 +46,27 @@ class _ContadorState extends State<Contador> {
   @override
  void dispose() {
   _timer.cancel();
+  // se remueve cuando el usuario cierra el app
+  WidgetsBinding.instance.removeObserver(this);
   super.dispose();
  }
+
+@override
+ void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch(state) {
+      case AppLifecycleState.paused:
+      print( '===========================================> Lost focus');
+      _timer.cancel(); // se fuerza a detener el contador
+      break;
+      case AppLifecycleState.resumed:
+      print("====================================> back");
+      _contador(); // vuelvo a llamar la funcion para reiniciar el contador
+      break;
+      default:
+      print("default");
+
+    }
+  }
 
 
 

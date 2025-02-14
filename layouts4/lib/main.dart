@@ -4,7 +4,7 @@ import 'screens/login.dart';
 import 'screens/third_screen.dart';
 import 'screens/bottom_navbar.dart';
 import 'screens/register.dart';
-
+import 'screens/search_screen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         "app-controller": (context) => MyBottomNavigationBar(),
         "third-screen": (context) => ThirdScreen(),
         "register": (context) => Register(),
+        "search": (context) => SearchScreen(),
       },
     );
   }

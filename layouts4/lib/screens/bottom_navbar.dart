@@ -42,12 +42,21 @@ class _MyBottomNavigationBar extends State<MyBottomNavigationBar> {
     return null;
   }
 
+  void _navigateToSearch(BuildContext context) {
+    Navigator.popAndPushNamed(context, 'search');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Tab app"),
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(onPressed: () {
+            _navigateToSearch(context);
+          }, icon: Icon(Icons.search))
+        ],
       ),
       body: _screens[_selectedItem],
       bottomNavigationBar: BottomNavigationBar(items: 

@@ -122,7 +122,7 @@ class _ProductTile extends StatelessWidget {
             subtitle: Text(product.description),
             trailing: IconButton(onPressed: () {
               print("Delete item");
-            }, icon: Icon(Icons.delete)),
+            }, icon: Icon(Icons.shopping_basket)),
           );
   }
 }

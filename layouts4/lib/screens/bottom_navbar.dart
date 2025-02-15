@@ -43,7 +43,7 @@ class _MyBottomNavigationBar extends State<MyBottomNavigationBar> {
   }
 
   void _navigateToSearch(BuildContext context) {
-    Navigator.popAndPushNamed(context, 'search');
+    Navigator.pushNamed(context, 'search');
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../adapters/local_storage.dart';
 
 class Login extends StatefulWidget {
 
@@ -10,7 +10,25 @@ class Login extends StatefulWidget {
 
 class _Login extends State<Login> {
 
-  void _goToAppController(BuildContext context) {
+
+  final LocalStorage _localStorage = LocalStorage();
+
+
+  @override
+  void initState() {
+    _validateAndGoInit(context);
+    super.initState();
+  }
+
+  Future<void> _validateAndGoInit(BuildContext context) async{
+    bool isAuthenticated = await _localStorage.getLoginStatus();
+    if (isAuthenticated) {
+      Navigator.pushNamed(context, 'app-controller');
+    }
+  }
+
+  Future<void> _goToAppController(BuildContext context) async {
+    _localStorage.setLoginStatus(true);
     Navigator.pushNamed(context, 'app-controller');
   }
 

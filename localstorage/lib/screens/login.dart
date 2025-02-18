@@ -10,24 +10,32 @@ class Login extends StatefulWidget {
 
 class _Login extends State<Login> {
 
+  bool _hasLoaded = false;
+  // instancia
+  LocalStorage _localStorage = LocalStorage();
 
-  final LocalStorage _localStorage = LocalStorage();
-
-
-  @override
-  void initState() {
-    _validateAndGoInit(context);
+@override
+void initState() {
+    _validateLogin(context);
     super.initState();
   }
 
-  Future<void> _validateAndGoInit(BuildContext context) async{
+
+  Future<void> _validateLogin(BuildContext context) async {
     bool isAuthenticated = await _localStorage.getLoginStatus();
+    
+    setState(() {
+      _hasLoaded = true;
+    });
+
     if (isAuthenticated) {
       Navigator.pushNamed(context, 'app-controller');
     }
+
   }
 
-  Future<void> _goToAppController(BuildContext context) async {
+
+  void _goToAppController(BuildContext context) {
     _localStorage.setLoginStatus(true);
     Navigator.pushNamed(context, 'app-controller');
   }
@@ -38,6 +46,11 @@ class _Login extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+
+    if (!_hasLoaded) {
+      return Container(child: Text("Cargando...."),);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Iniciar sesion"),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:convert' as convert;
+
 import '../adapters/local_storage.dart';
+import '../adapters/dio_adapter.dart';
+import '../adapters/http_adapter.dart';
 
 class Login extends StatefulWidget {
 
@@ -11,8 +15,11 @@ class Login extends StatefulWidget {
 class _Login extends State<Login> {
 
   bool _hasLoaded = false;
+
   // instancia
   LocalStorage _localStorage = LocalStorage();
+  DioAdapter _dioAdapter = DioAdapter();
+  HttpAdapter _httpAdapter = HttpAdapter();
 
 @override
 void initState() {
@@ -23,7 +30,15 @@ void initState() {
 
   Future<void> _validateLogin(BuildContext context) async {
     bool isAuthenticated = await _localStorage.getLoginStatus();
+    bool isAuthenticated = await _localStorage.getLoginStatus();
+    dynamic dioResponse = await _dioAdapter.getRequest();
+    dynamic httpResponse = await _httpAdapter.getRequest();
+    List<dynamic> responseJson = convert.jsonDecode(httpResponse);
+      
+    print("================================> DIO ${responseJson[0]["type"]}");
+    print("================================> HTTP ${httpResponse.runtimeType}");
     
+
     setState(() {
       _hasLoaded = true;
     });

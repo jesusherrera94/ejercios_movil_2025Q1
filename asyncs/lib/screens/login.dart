@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert' as convert;
+
 import '../adapters/local_storage.dart';
 import '../adapters/dio_adapter.dart';
 import '../adapters/http_adapter.dart';
@@ -28,14 +30,13 @@ void initState() {
 
   Future<void> _validateLogin(BuildContext context) async {
     bool isAuthenticated = await _localStorage.getLoginStatus();
-    try {
-      dynamic dioResponse = await _dioAdapter.getRequest();
-      dynamic httpResponse = await _httpAdapter.getRequest();
-      print("This is the DIO response =======================>>>>>>>: ${dioResponse}");
-      print("This is the HTTP response =======================>>>>>>>: ${httpResponse}");
-    }  on Exception catch (e) {
-      print("error when calling endpoint: ${e}");
-    }
+    bool isAuthenticated = await _localStorage.getLoginStatus();
+    dynamic dioResponse = await _dioAdapter.getRequest();
+    dynamic httpResponse = await _httpAdapter.getRequest();
+    List<dynamic> responseJson = convert.jsonDecode(httpResponse);
+      
+    print("================================> DIO ${responseJson[0]["type"]}");
+    print("================================> HTTP ${httpResponse.runtimeType}");
     
 
     setState(() {

@@ -30,8 +30,7 @@ void initState() {
 
   Future<void> _validateLogin(BuildContext context) async {
     bool isAuthenticated = await _localStorage.getLoginStatus();
-    bool isAuthenticated = await _localStorage.getLoginStatus();
-    dynamic dioResponse = await _dioAdapter.getRequest();
+    dynamic dioResponse = await _dioAdapter.getRequest('https://official-joke-api.appspot.com/random_ten');
     dynamic httpResponse = await _httpAdapter.getRequest();
     List<dynamic> responseJson = convert.jsonDecode(httpResponse);
       

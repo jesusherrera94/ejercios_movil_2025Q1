@@ -6,8 +6,8 @@ class DioAdapter {
     _dio = Dio();
   }
 
-  Future<dynamic> getRequest() async {
-    Response<dynamic> response = await _dio.get('https://official-joke-api.appspot.com/random_ten');
+  Future<dynamic> getRequest(String url) async {
+    Response<dynamic> response = await _dio.get(url);
     return response.data;
   }
 

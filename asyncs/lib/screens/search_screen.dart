@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import '../models/product.dart';
+import '../adapters/dio_adapter.dart';
 
 
 class SearchScreen extends StatefulWidget {
@@ -13,18 +14,11 @@ class _SearchScreenState extends State<SearchScreen> {
   
   // states
   late List<Product> _productsState;
+  bool _hasLoaded = false;
   // values
 
-  final List<Product> _products = [
-    Product(id: 0, image: 'assets/img/guitar.jpg.auto.webp', name: 'Gibson SG 2024', description: "Lorem ipsum", price: 99.99, pType: ProductType.INSTRUMENT),
-    Product(id: 1, image: 'assets/img/guitar.jpg.auto.webp', name: 'Gibson SG 1970', description: "Lorem ipsum", price: 199.99, pType: ProductType.INSTRUMENT),
-    Product(id: 2, image: 'assets/img/pi.webp', name: 'Big muff Pi', description: "Lorem ipsum", price: 99.99, pType: ProductType.EFFECT),
-    Product(id: 3, image: 'assets/img/ds1.jpg', name: 'Boss DS1', description: "Lorem ipsum", price: 199.99, pType: ProductType.EFFECT),
-    Product(id: 4, image: 'assets/img/rockets.jpg', name: 'Rockets sockets kit', description: "Lorem ipsum", price: 79.99, pType: ProductType.MAINTENANCE),
-    Product(id: 5, image: 'assets/img/pi.webp', name: 'BM Pi 1972', description: "Lorem ipsum", price: 299.99, pType: ProductType.EFFECT),
-    Product(id: 6, image: 'assets/img/toolkit.jpg', name: 'Repair toolkit', description: "Lorem ipsum", price: 199.99, pType: ProductType.MAINTENANCE),
-    Product(id: 7, image: 'assets/img/toolkit.jpg', name:'cheap toolkit', description: "Lorem ipsum", price: 20.99, pType: ProductType.MAINTENANCE),
-  ];
+  List<Product> _products = [];
+  DioAdapter _dioAdapter = DioAdapter();
 
 
   @override
@@ -34,16 +28,23 @@ class _SearchScreenState extends State<SearchScreen> {
     _setProduts(null);
   }
 
-  void _setProduts(ProductType? pType) {
+  Future<void> _setProduts(ProductType? pType) async  {
     List<Product> p;
+    setState(() {
+      _hasLoaded = false;
+    });
     if (pType != null) {
       p = _products.where((pdt) => pdt.pType == pType).toList();
     } else {
+      dynamic response = await _dioAdapter.getRequest("https://firestore.googleapis.com/v1/projects/guitars-eae79/databases/(default)/documents/products");
+      List<dynamic> documents = response["documents"];
+      _products = documents.map((doc) => Product.fromJson(doc)).toList();
       p = _products;
     }
 
     setState(() {
       _productsState = p;
+      _hasLoaded = true;
     });
 
   }
@@ -59,6 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_hasLoaded) return _SearchLoading();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Search Item"),
@@ -93,18 +95,33 @@ class _SearchScreenState extends State<SearchScreen> {
 
 // stateless widget
 
+class _SearchLoading extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return 
+    Scaffold(
+      appBar: AppBar(
+        title: const Text("Search Item"),
+      ),
+      body:
+    Center(child: CircularProgressIndicator())
+    );
+  }
+}
+
 class _ProductTile extends StatelessWidget {
 
-  Product product;
+  final Product product;
 
-  _ProductTile({
+  const _ProductTile({
     required this.product
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-            leading: Image(image: AssetImage(product.image),
+            leading: Image.network(product.image,
             width: 80,
             height: 200,
             fit: BoxFit.contain,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../models/product.dart';
+
 class ProductItem extends StatefulWidget {
-  const ProductItem({super.key});
+  Product product;
+  ProductItem({super.key, required this.product});
   @override
   State<ProductItem> createState() => _ProductItemState();
 }
@@ -14,7 +17,7 @@ class _ProductItemState extends State<ProductItem> {
       padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
       child: Row(
         children: [
-          Image(image: AssetImage('assets/img/guitar.jpg.auto.webp'),
+          Image.network(widget.product.image,
             width: 80,
             height: 200,
             fit: BoxFit.cover,
@@ -27,18 +30,18 @@ class _ProductItemState extends State<ProductItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Gibson SG",
+              Text(widget.product.name,
                 style: TextStyle( fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
-              Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis non lacus magna.",
+              Text(widget.product.description,
                 style: TextStyle(fontSize: 12),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
 
-              Text("\$99.99",
+              Text("\$ ${widget.product.price}",
                 style: TextStyle(fontSize: 14, color: Colors.green, fontWeight: FontWeight.bold, ),
               ),
               Center(

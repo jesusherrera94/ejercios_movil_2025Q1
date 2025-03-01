@@ -16,6 +16,7 @@ class _HomeState extends State<Home> {
   List<Product> _products = [];
   bool _hasLoaded = false;
 
+  // instancia de dio
   DioAdapter _dioAdapter = DioAdapter();
 
   @override
@@ -24,29 +25,28 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
-
   Future<void> _getProducts() async {
-    dynamic response = await _dioAdapter.getRequest("https://firestore.googleapis.com/v1/projects/guitars-eae79/databases/(default)/documents/products");
-    List<dynamic> documents = response["documents"];
-    _products = documents.map((doc) => Product.fromJson(doc)).toList();
+    dynamic response = await _dioAdapter.getRequest('https://firestore.googleapis.com/v1/projects/guitars-eae79/databases/(default)/documents/products');
+    List<dynamic> documents = response['documents'];
+     _products = documents.map((doc) => Product.fromJson(doc)).toList();
     setState(() {
       _hasLoaded = true;
     });
   }
 
-  List<Widget> _renderProducts() {
-    List<Widget> productWidgets = [];
-    for(final p in _products) {
-      productWidgets.add(ProductItem(product: p));
-    }
-    return productWidgets;
+List<Widget> _renderProduct() {
+  List<Widget> productWidget = [];
+  for(final p in _products) {
+    productWidget.add(ProductItem(product: p));
   }
+  return productWidget;
+}
 
   @override
   Widget build(BuildContext context) {
 
-    if (!_hasLoaded) return _HomeLoading();
-    
+    if(!_hasLoaded) return Center(child: CircularProgressIndicator(),);
+
     return GridView.count(
       padding: const EdgeInsets.all(20),
       crossAxisCount: 1,
@@ -54,17 +54,9 @@ class _HomeState extends State<Home> {
       mainAxisSpacing: 10,
       childAspectRatio: 2,
       children: [
-        ..._renderProducts()
+        ..._renderProduct(),
       ],
     );
   }
   
-}
-
-class _HomeLoading extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
-  }
 }

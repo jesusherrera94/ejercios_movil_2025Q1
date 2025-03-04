@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../adapters/dio_adapter.dart';
+import '../adapters/local_storage.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
 class Register extends StatefulWidget {
@@ -14,6 +16,7 @@ class _Register extends State<Register> with SingleTickerProviderStateMixin{
 
   late AnimationController _animationController;
   late Animation<double> _animation;
+  LocalStorage _localStorage = LocalStorage();
 
   // form key
   final _formKey = GlobalKey<FormState>();
@@ -77,29 +80,34 @@ class _Register extends State<Register> with SingleTickerProviderStateMixin{
 
 
   // Callback function for form submission
-  void _onSubmit() {
+  void _onSubmit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print(_user.toMap());
       try {
-        DioAdapter().postRequest('https://firestore.googleapis.com/v1/projects/guitars-eae79/databases/(default)/documents/users', _user.toFirestoreRestMap());
+        _user.setProfilePicture();
+        dynamic response = await DioAdapter().postRequest('https://firestore.googleapis.com/v1/projects/guitars-eae79/databases/(default)/documents/users', _user.toFirestoreRestMap());
+        User newUser = User.fromMap(response);
+        // save user to shared preferences
+        await _localStorage.setUser(newUser.toStringMap());
+        _displaySnackbar(context, 'User registered successfully'); 
       } catch (e) {
         print(e);
+        _displaySnackbar(context, 'Error registering user');
       }
     }
   }
 
 
 
-  void _displaySnackbar(BuildContext context) {
-    // Navigator.pushNamed(context, 'app-controller');
+  void _displaySnackbar(BuildContext context, String message) {
     SnackBar snackBar = SnackBar(
-      content: const Text("User Created!"),
+      content: Text(message),
       // opcional!
       action: SnackBarAction(label: "Undo", onPressed: () {
       }),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.pushNamed(context, 'app-controller');
   }
 
   @override
@@ -211,8 +219,7 @@ class _Register extends State<Register> with SingleTickerProviderStateMixin{
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: (){
-                      _onSubmit();
-                      _displaySnackbar(context);
+                      _onSubmit(context);
                       }, // Callback function
                     child: const Text('Register'),
                   ),

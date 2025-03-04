@@ -13,7 +13,16 @@ class LocalStorage {
     await _asyncPrefs.setBool("isAuthenticated", logiStatus);
   }
 
+  Future<void> setUser(String user) async {
+    await _asyncPrefs.setString("user", user);
+  }
+
+  Future<void> clearAll() async {
+    await _asyncPrefs.clear();
+  }
+
   // lectura de valores
   Future<bool> getLoginStatus() async => await _asyncPrefs.getBool("isAuthenticated") ?? false;
+  Future<String> getUser() async => await _asyncPrefs.getString("user") ?? '';
 
 }

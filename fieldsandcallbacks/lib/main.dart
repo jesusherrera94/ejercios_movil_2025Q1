@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'screens/tab_controller.dart';
 import 'screens/login.dart';
 import 'screens/third_screen.dart';
 import 'screens/bottom_navbar.dart';
 import 'screens/register.dart';
 import 'screens/search_screen.dart';
-void main() {
+
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 

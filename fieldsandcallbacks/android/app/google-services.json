@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "825327376585",
+    "project_id": "guitars-eae79",
+    "storage_bucket": "guitars-eae79.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825327376585:android:284ed6e4b37460271bd518",
+        "android_client_info": {
+          "package_name": "com.jesus.guitarapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXpeu0rBLPy-NqG947grZr-UB82ymm95M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

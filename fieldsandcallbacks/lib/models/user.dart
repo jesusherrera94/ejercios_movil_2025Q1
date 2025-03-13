@@ -8,6 +8,7 @@ class User {
   String gender;
   String principalInterest;
   String? profilePicture;
+  String? uid;
 
   User({
     this.id = '',
@@ -18,6 +19,7 @@ class User {
     required this.password,
     required this.gender,
     required this.principalInterest,
+    this.uid,
   });
 
   User.withoutPassword({
@@ -29,11 +31,15 @@ class User {
     required this.principalInterest,
     this.profilePicture,
     this.password = '',
+    this.uid,
   });
 
   void setProfilePicture() {
     final Random _random = Random();
     profilePicture = "https://picsum.photos/id/${_random.nextInt(100)}/400/400";
+  }
+  void setUid(String uid) {
+    this.uid = uid;
   }
 
   String toStringMap() {
@@ -45,7 +51,8 @@ class User {
       "email": \"$email\",
       "principalInterest": \"$principalInterest\",
       "gender": \"$gender\",
-      "profilePicture": \"$profilePicture\"
+      "profilePicture": \"$profilePicture\",
+      "uid": \"$uid\",
     }""" ;
   }
 
@@ -57,6 +64,7 @@ class User {
       'gender': gender,
       'principalInterest': principalInterest,
       'profilePicture': profilePicture,
+      'uid': uid
     };
   }
 
@@ -70,8 +78,8 @@ class User {
         'email': {'stringValue': email},
         'gender': {'stringValue': gender},
         'principalInterest': {'stringValue': principalInterest},
-        'profilePicture': {'stringValue': profilePicture}
-            
+        'profilePicture': {'stringValue': profilePicture},
+        'uid': {'stringValue': uid}     
       }
     };
   }
@@ -88,6 +96,20 @@ class User {
       profilePicture: fields['profilePicture'] != null
           ? fields['profilePicture']['stringValue'] as String
           : null,
+      uid: fields['uid']['stringValue'] as String
     );
   }
+
+  factory User.fromFirebaseMap(Map<String, dynamic> json) {
+    return User.withoutPassword(
+      id: json['uid'],
+      username: json['username'],
+      fullname: json['fullname'],
+      email: json['email'],
+      gender: json['gender'],
+      principalInterest: json['principalInterest'],
+      profilePicture: json['profilePicture'],
+      uid: json['uid']
+    );
+    }
 }

@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'guitars-eae79.firebasestorage.app',
     measurementId: 'G-K72G7KGYQK',
   );
+
 }

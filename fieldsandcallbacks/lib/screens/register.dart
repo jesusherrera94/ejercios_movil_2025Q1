@@ -4,6 +4,7 @@ import '../models/user.dart';
 import '../adapters/dio_adapter.dart';
 import '../adapters/local_storage.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import '../adapters/auth.dart';
 
 class Register extends StatefulWidget {
 
@@ -84,6 +85,8 @@ class _Register extends State<Register> with SingleTickerProviderStateMixin{
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
+        dynamic authResponse = await Auth.createUserWithEmailAndPassword(_user.email, _user.password);
+        _user.setUid(authResponse.user.uid);
         _user.setProfilePicture();
         dynamic response = await DioAdapter().postRequest('https://firestore.googleapis.com/v1/projects/guitars-eae79/databases/(default)/documents/users', _user.toFirestoreRestMap());
         User newUser = User.fromMap(response);

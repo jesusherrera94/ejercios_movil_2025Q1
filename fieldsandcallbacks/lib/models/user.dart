@@ -52,7 +52,7 @@ class User {
       "principalInterest": \"$principalInterest\",
       "gender": \"$gender\",
       "profilePicture": \"$profilePicture\",
-      "uid": \"$uid\",
+      "uid": \"$uid\"
     }""" ;
   }
 

@@ -4,6 +4,8 @@ import '../adapters/dio_adapter.dart';
 import '../models/product.dart';
 
 
+List<Map<String, dynamic>> cartItems = [];
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -37,10 +39,21 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void _addToCart(Product product){
+    setState((){
+      cartItems.add({
+        'title': product.name,
+        'subtitle': product.description,
+        'price': product.price,
+        'image': product.image,
+      });
+    });
+  }
+
 List<Widget> _renderProduct() {
   List<Widget> productWidget = [];
   for(final p in _products) {
-    productWidget.add(ProductItem(product: p));
+    productWidget.add(ProductItem(product: p, addToCart: _addToCart));
   }
   return productWidget;
 }

@@ -1,5 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'home.dart';
+import '../adapters/db.dart';
+import '../adapters/local_storage.dart';
+
+
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -9,18 +16,98 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
-  final List<Map<String, dynamic>> _orders = [
-    {
-      'orderId': 1,
-      'date': '2022-10-10',
-      'total': 100.0,
-      'status': 'Delivered',
-      'noOfItems': 2,
-    }
-  ];
+  final Db _db = Db();
+   List<Map<String, dynamic>> _orders = [];
+  LocalStorage _localStorage = LocalStorage();
+  Map<String, dynamic> _user = {};
+  int _notificationsCounter = 0;
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+    loadNotificationsConfigs();
+    _db.setListenerToOrder(onOrderReceived: _addOrderToHistory);
+  }
+
+
+  void loadNotificationsConfigs() {
+    const androidInitialize =  AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iOSInitialize = DarwinInitializationSettings(
+      requestAlertPermission : false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+    const initializationSettings = InitializationSettings(
+      android: androidInitialize,
+      iOS: iOSInitialize,
+    );
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> _showNotification({ required String title, required String body, String? subTitle}) async {
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'channelId',
+      'Local Notification',
+      channelDescription: 'This is a channel for local notification',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      subtitle: subTitle,
+      threadIdentifier: 'thread_id',
+    );
+    await flutterLocalNotificationsPlugin.show(
+      _notificationsCounter++,
+      title,
+      body,
+      NotificationDetails(android: androidDetails, iOS: iosDetails),
+    );
+  }
+
+
+  void _loadUserInfo() async {
+    final userString = await _localStorage.getUser();
+    setState(() {
+      _user = jsonDecode(userString);
+    });
+  }
+
+  void _addOrderToHistory(Map<String, dynamic> order) {
+    int index = _orders.indexWhere((existingOrder) => existingOrder['orderId'] == order['orderId']);
+      if (index != -1) {
+        _orders[index] = order;
+        _showNotification(title: 'Order Updated', body: 'Order ${order['orderId']} has been updated');
+      } else {
+        _orders.add(order);
+      }
+    setState(() {
+    });
+  }
 
   double _calculateSubTotal() {
     return cartItems.fold(0.0, (sum, item) => sum + item['price']);
+  }
+
+  Future<void> _placeOrder() async {
+    double subTotal = _calculateSubTotal();
+    Map<String, dynamic> order = {
+      'date': DateTime.now().toString(),
+      'total': subTotal,
+      'status': 'Pending',
+      'noOfItems': cartItems.length,
+      'userId': _user['uid'],
+    };
+    dynamic orderResponse = await _db.saveOrder(order);
+    _addOrderToHistory({
+      'orderId': orderResponse.id,
+      ...orderResponse.data(),
+    });
   }
 
   @override
@@ -60,8 +147,8 @@ class _CartState extends State<Cart> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        print('Placing order...');
+                      onPressed: () async {
+                        await _placeOrder();
                       },
                       child: const Text('Place Order'),
                     ),

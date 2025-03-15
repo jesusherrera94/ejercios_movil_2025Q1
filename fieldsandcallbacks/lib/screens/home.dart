@@ -3,6 +3,9 @@ import 'product_item.dart';
 import '../adapters/dio_adapter.dart';
 import '../models/product.dart';
 
+
+List<Map<String, dynamic>> cartItems = [];
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -18,12 +21,14 @@ class _HomeState extends State<Home> {
 
   // instancia de dio
   DioAdapter _dioAdapter = DioAdapter();
+  
 
   @override
   void initState() {
     _getProducts();
     super.initState();
   }
+
 
   Future<void> _getProducts() async {
     dynamic response = await _dioAdapter.getRequest('https://firestore.googleapis.com/v1/projects/guitars-eae79/databases/(default)/documents/products');
@@ -34,10 +39,21 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void _addToCart(Product product){
+    setState((){
+      cartItems.add({
+        'title': product.name,
+        'subtitle': product.description,
+        'price': product.price,
+        'image': product.image,
+      });
+    });
+  }
+
 List<Widget> _renderProduct() {
   List<Widget> productWidget = [];
   for(final p in _products) {
-    productWidget.add(ProductItem(product: p));
+    productWidget.add(ProductItem(product: p, addToCart: _addToCart));
   }
   return productWidget;
 }

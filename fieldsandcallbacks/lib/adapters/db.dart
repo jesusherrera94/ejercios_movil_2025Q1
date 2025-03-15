@@ -51,6 +51,7 @@ class Db {
         'orderId': doc.id,
         ...doc.data(),
       }).toList();
+      print('Orders received: $orders');
       return orders;
     } catch (e) {
       print('error ocurred calling Firebase!: $e');

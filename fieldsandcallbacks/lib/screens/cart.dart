@@ -32,6 +32,7 @@ class _CartState extends State<Cart> {
   }
 
 
+
   void loadNotificationsConfigs() {
     const androidInitialize =  AndroidInitializationSettings('@mipmap/ic_launcher');
     const iOSInitialize = DarwinInitializationSettings(
@@ -75,6 +76,14 @@ class _CartState extends State<Cart> {
     final userString = await _localStorage.getUser();
     setState(() {
       _user = jsonDecode(userString);
+    });
+    getOrders(_user['uid']);
+  }
+
+  void getOrders(String userId) async {
+    List<Map<String, dynamic>> orders = await _db.getOrders(userId);
+    setState(() {
+      _orders = orders;
     });
   }
 

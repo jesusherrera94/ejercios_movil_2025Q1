@@ -4,6 +4,7 @@ import 'dart:convert' as convert;
 import '../adapters/local_storage.dart';
 import '../adapters/dio_adapter.dart';
 import '../adapters/http_adapter.dart';
+import 'package:http/http.dart' as http;
 import '../adapters/auth.dart';
 import '../adapters/db.dart';
 import '../models/user.dart';
@@ -25,7 +26,7 @@ class _Login extends State<Login> {
   // instancia
   LocalStorage _localStorage = LocalStorage();
   DioAdapter _dioAdapter = DioAdapter();
-  HttpAdapter _httpAdapter = HttpAdapter();
+  HttpAdapter _httpAdapter = HttpAdapter(client: http.Client());
   Db _db = Db();
   final _formKey = GlobalKey<FormState>();
 
